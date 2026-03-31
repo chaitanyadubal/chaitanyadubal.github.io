@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chaitanya Dubal — Cloud Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #050a0f;
+  --bg2: #080f18;
+  --surface: #0d1a28;
+  --surface2: #112033;
+  --accent: #00e5ff;
+  --accent2: #00ff9d;
+  --accent3: #ff6b35;
+  --text: #e8f4f8;
+  --text2: #7a9db5;
+  --text3: #3a5a70;
+  --border: rgba(0,229,255,0.12);
+  --glow: 0 0 30px rgba(0,229,255,0.15);
+  --glow-strong: 0 0 60px rgba(0,229,255,0.25);
+  --font-head: 'Syne', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+  --font-body: 'DM Sans', sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);overflow-x:hidden;cursor:none;}
+
+/* CURSOR */
+.cursor-dot{width:8px;height:8px;background:var(--accent);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transition:transform 0.1s;box-shadow:0 0 12px var(--accent);}
+.cursor-ring{width:32px;height:32px;border:1.5px solid rgba(0,229,255,0.5);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9998;transition:transform 0.15s ease,width 0.3s,height 0.3s,border-color 0.3s;}
+.cursor-ring.hovered{width:48px;height:48px;border-color:var(--accent);}
+
+/* GRID BG */
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,229,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.025) 1px,transparent 1px);background-size:48px 48px;z-index:0;pointer-events:none;}
+
+/* LOADER */
+#loader{position:fixed;inset:0;background:var(--bg);z-index:10000;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:20px;transition:opacity 0.5s;}
+#loader.done{opacity:0;pointer-events:none;}
+.loader-text{font-family:var(--font-mono);font-size:12px;color:var(--accent);letter-spacing:0.2em;}
+.loader-bar-wrap{width:280px;height:2px;background:var(--border);overflow:hidden;}
+.loader-bar{height:100%;background:linear-gradient(to right,var(--accent2),var(--accent));width:0%;animation:loadProgress 1.8s ease forwards;}
+@keyframes loadProgress{to{width:100%;}}
+.loader-pct{font-family:var(--font-mono);font-size:11px;color:var(--text3);}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 40px;display:flex;align-items:center;justify-content:space-between;background:rgba(5,10,15,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:var(--font-mono);font-size:13px;color:var(--accent);letter-spacing:0.1em;}
+.nav-logo span{color:var(--text2);}
+.nav-links{display:flex;gap:32px;}
+.nav-links a{font-family:var(--font-mono);font-size:11px;color:var(--text2);text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;transition:color 0.2s;position:relative;}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--accent);transition:width 0.3s;}
+.nav-links a:hover{color:var(--accent);}
+.nav-links a:hover::after{width:100%;}
+.nav-status{display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:11px;color:var(--accent2);}
+.status-dot{width:7px;height:7px;background:var(--accent2);border-radius:50%;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 6px var(--accent2);}50%{opacity:0.5;box-shadow:none;}}
+
+/* HERO */
+#hero{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:120px 80px 80px;overflow:hidden;}
+.hero-eyebrow{font-family:var(--font-mono);font-size:12px;color:var(--accent);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:24px;opacity:0;animation:fadeUp 0.8s 0.2s forwards;}
+.hero-name{font-family:var(--font-head);font-size:clamp(56px,8vw,110px);font-weight:800;line-height:0.9;letter-spacing:-0.03em;margin-bottom:16px;opacity:0;animation:fadeUp 0.8s 0.4s forwards;}
+.hero-name .line1{display:block;color:var(--text);}
+.hero-name .line2{display:block;-webkit-text-stroke:1px rgba(0,229,255,0.4);color:transparent;}
+.hero-title{font-family:var(--font-mono);font-size:clamp(14px,2vw,18px);color:var(--text2);margin-bottom:40px;opacity:0;animation:fadeUp 0.8s 0.6s forwards;}
+.hero-title .highlight{color:var(--accent);}
+.hero-desc{max-width:560px;font-size:16px;line-height:1.75;color:var(--text2);margin-bottom:48px;opacity:0;animation:fadeUp 0.8s 0.8s forwards;}
+.hero-ctas{display:flex;gap:16px;flex-wrap:wrap;opacity:0;animation:fadeUp 0.8s 1s forwards;}
+
+.btn-primary{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;background:var(--accent);color:var(--bg);font-family:var(--font-mono);font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none;border:none;cursor:none;transition:all 0.3s;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px));}
+.btn-primary:hover{background:var(--bg);color:var(--accent);box-shadow:inset 0 0 0 1.5px var(--accent),var(--glow-strong);}
+.btn-outline{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;background:transparent;color:var(--text2);font-family:var(--font-mono);font-size:12px;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none;border:1px solid var(--border);cursor:none;transition:all 0.3s;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px));}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent);box-shadow:var(--glow);}
+
+.hero-orb{position:absolute;right:-200px;top:50%;transform:translateY(-50%);width:700px;height:700px;border-radius:50%;background:radial-gradient(circle at 40% 40%,rgba(0,229,255,0.07) 0%,transparent 60%);border:1px solid rgba(0,229,255,0.06);animation:rotSlow 30s linear infinite;pointer-events:none;}
+.hero-orb::before{content:'';position:absolute;inset:60px;border-radius:50%;border:1px solid rgba(0,229,255,0.08);animation:rotSlow 20s linear infinite reverse;}
+.hero-orb::after{content:'';position:absolute;inset:140px;border-radius:50%;border:1px solid rgba(0,255,157,0.06);}
+@keyframes rotSlow{to{transform:translateY(-50%) rotate(360deg);}}
+
+.hero-tags{position:absolute;right:80px;bottom:60px;display:flex;flex-direction:column;gap:8px;opacity:0;animation:fadeIn 1s 1.2s forwards;}
+.hero-tag{font-family:var(--font-mono);font-size:10px;color:var(--text3);letter-spacing:0.1em;border:1px solid var(--border);padding:6px 12px;text-align:right;}
+.hero-tag span{color:var(--accent);margin-right:8px;}
+.scroll-hint{position:absolute;bottom:32px;left:80px;display:flex;align-items:center;gap:12px;font-family:var(--font-mono);font-size:10px;color:var(--text3);letter-spacing:0.1em;opacity:0;animation:fadeIn 1s 1.5s forwards;}
+.scroll-line{width:40px;height:1px;background:linear-gradient(to right,var(--accent),transparent);animation:expandLine 2s 2s ease forwards;transform-origin:left;transform:scaleX(0);}
+@keyframes expandLine{to{transform:scaleX(1);}}
+
+/* SECTIONS */
+section{position:relative;z-index:1;padding:100px 80px;}
+.section-label{display:flex;align-items:center;gap:16px;font-family:var(--font-mono);font-size:11px;color:var(--accent);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:56px;}
+.section-label::after{content:'';flex:1;height:1px;background:linear-gradient(to right,var(--border),transparent);max-width:200px;}
+.section-label .num{color:var(--text3);margin-right:4px;}
+.section-title{font-family:var(--font-head);font-size:clamp(36px,5vw,64px);font-weight:800;line-height:1.05;letter-spacing:-0.03em;margin-bottom:20px;}
+
+/* ABOUT */
+#about{background:var(--bg2);}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;}
+.about-intro{font-size:18px;line-height:1.8;color:var(--text2);}
+.about-intro strong{color:var(--text);font-weight:500;}
+.about-intro .accent{color:var(--accent);}
+.skills-panel{display:flex;flex-direction:column;gap:24px;}
+.skill-category{border:1px solid var(--border);background:var(--surface);padding:24px;position:relative;overflow:hidden;transition:border-color 0.3s,box-shadow 0.3s;}
+.skill-category::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--accent);}
+.skill-category:hover{border-color:rgba(0,229,255,0.3);box-shadow:var(--glow);}
+.skill-cat-title{font-family:var(--font-mono);font-size:10px;color:var(--accent);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:14px;}
+.skill-chips{display:flex;flex-wrap:wrap;gap:8px;}
+.chip{font-family:var(--font-mono);font-size:11px;padding:5px 12px;background:rgba(0,229,255,0.05);border:1px solid rgba(0,229,255,0.12);color:var(--text2);letter-spacing:0.05em;transition:all 0.2s;}
+.chip:hover{background:rgba(0,229,255,0.12);color:var(--accent);border-color:rgba(0,229,255,0.4);}
+.edu-card{margin-top:40px;padding:24px;border:1px solid var(--border);background:var(--surface);position:relative;overflow:hidden;}
+.edu-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:2px;background:linear-gradient(to right,var(--accent2),var(--accent));}
+.edu-school{font-family:var(--font-head);font-size:18px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.edu-degree{font-size:14px;color:var(--text2);margin-bottom:12px;}
+.edu-courses{display:flex;flex-wrap:wrap;gap:6px;}
+.course-tag{font-family:var(--font-mono);font-size:10px;padding:4px 10px;background:rgba(0,255,157,0.05);border:1px solid rgba(0,255,157,0.15);color:var(--accent2);letter-spacing:0.05em;}
+
+/* PROJECTS */
+#projects{background:var(--bg);}
+.projects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:2px;}
+.project-card{background:var(--surface);border:1px solid var(--border);overflow:hidden;position:relative;cursor:none;transition:border-color 0.4s,transform 0.4s;}
+.project-card:hover{border-color:rgba(0,229,255,0.35);transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,0.5),var(--glow);z-index:2;}
+.project-header{padding:32px 32px 0;display:flex;justify-content:space-between;align-items:flex-start;}
+.project-badge{font-family:var(--font-mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;padding:5px 12px;border:1px solid;}
+.badge-live{color:var(--accent2);border-color:rgba(0,255,157,0.3);background:rgba(0,255,157,0.05);}
+.badge-local{color:var(--accent3);border-color:rgba(255,107,53,0.3);background:rgba(255,107,53,0.05);}
+.project-num{font-family:var(--font-mono);font-size:11px;color:var(--text3);}
+.project-icon{padding:32px 32px 20px;font-size:48px;line-height:1;}
+.project-body{padding:0 32px 32px;}
+.project-name{font-family:var(--font-head);font-size:28px;font-weight:800;color:var(--text);margin-bottom:6px;letter-spacing:-0.02em;}
+.project-tagline{font-family:var(--font-mono);font-size:12px;color:var(--accent);margin-bottom:16px;letter-spacing:0.05em;}
+.project-desc{font-size:14px;line-height:1.7;color:var(--text2);margin-bottom:24px;}
+.project-stack{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:24px;}
+.stack-tag{font-family:var(--font-mono);font-size:10px;padding:4px 10px;border:1px solid rgba(0,229,255,0.12);color:var(--text3);letter-spacing:0.05em;transition:all 0.2s;}
+.project-card:hover .stack-tag{border-color:rgba(0,229,255,0.25);color:var(--text2);}
+.project-links{display:flex;gap:12px;}
+.project-link{font-family:var(--font-mono);font-size:11px;color:var(--text2);text-decoration:none;letter-spacing:0.08em;display:flex;align-items:center;gap:6px;transition:color 0.2s;cursor:none;}
+.project-link:hover{color:var(--accent);}
+.project-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);margin-top:24px;border-top:1px solid var(--border);}
+.metric{background:var(--surface2);padding:16px;text-align:center;}
+.metric-val{font-family:var(--font-mono);font-size:18px;font-weight:700;color:var(--accent);display:block;}
+.metric-label{font-size:10px;color:var(--text3);display:block;margin-top:3px;}
+.project-card.featured{grid-column:1/-1;display:grid;grid-template-columns:1fr auto;}
+.project-card.featured .project-body-wrap{display:flex;flex-direction:column;padding:32px;}
+.project-card.featured .project-metrics{display:grid;grid-template-columns:1fr;grid-template-rows:repeat(3,1fr);margin-top:0;border-top:none;border-left:1px solid var(--border);min-width:160px;}
+
+/* ARCHITECTURE */
+#architecture{background:var(--bg2);}
+.arch-tabs{display:flex;gap:2px;margin-bottom:40px;border-bottom:1px solid var(--border);}
+.arch-tab{font-family:var(--font-mono);font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--text3);padding:12px 24px;background:transparent;border:none;cursor:none;transition:all 0.2s;position:relative;}
+.arch-tab.active{color:var(--accent);}
+.arch-tab.active::after{content:'';position:absolute;bottom:-1px;left:0;width:100%;height:1px;background:var(--accent);}
+.arch-tab:hover{color:var(--text2);}
+.arch-panel{display:none;}
+.arch-panel.active{display:block;}
+.arch-diagram{background:var(--surface);border:1px solid var(--border);padding:40px;min-height:300px;}
+.arch-ascii{font-family:var(--font-mono);font-size:13px;line-height:1.6;color:var(--text2);white-space:pre;overflow-x:auto;}
+.arch-ascii .box{color:var(--accent);}
+.arch-ascii .arrow{color:var(--text3);}
+.arch-ascii .label{color:var(--accent2);}
+.arch-ascii .service{color:var(--accent3);}
+.arch-services{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:32px;}
+.arch-service{background:var(--surface2);border:1px solid var(--border);padding:20px;transition:border-color 0.3s;}
+.arch-service:hover{border-color:rgba(0,229,255,0.3);}
+.arch-service-icon{font-size:24px;margin-bottom:10px;}
+.arch-service-name{font-family:var(--font-mono);font-size:12px;color:var(--accent);margin-bottom:4px;letter-spacing:0.05em;}
+.arch-service-desc{font-size:12px;color:var(--text3);line-height:1.5;}
+
+/* TERMINAL */
+#terminal-section{background:var(--bg);padding:60px 80px;}
+.terminal-window{background:#010912;border:1px solid var(--border);box-shadow:var(--glow-strong);max-width:860px;margin:0 auto;}
+.terminal-bar{background:var(--surface);padding:12px 16px;display:flex;align-items:center;gap:16px;border-bottom:1px solid var(--border);}
+.term-dots{display:flex;gap:7px;}
+.term-dot{width:12px;height:12px;border-radius:50%;}
+.term-dot.r{background:#ff5f57;}
+.term-dot.y{background:#febc2e;}
+.term-dot.g{background:#28c840;}
+.term-title{font-family:var(--font-mono);font-size:12px;color:var(--text3);flex:1;text-align:center;}
+.terminal-body{padding:28px;font-family:var(--font-mono);font-size:13px;line-height:1.8;min-height:280px;}
+.term-line{display:flex;gap:8px;margin-bottom:2px;}
+.term-prompt{color:var(--accent2);white-space:nowrap;}
+.term-cmd{color:var(--text);}
+.term-output{color:var(--text3);padding-left:20px;}
+.term-output.accent{color:var(--accent);}
+.term-output.green{color:var(--accent2);}
+.term-output.orange{color:var(--accent3);}
+.term-cursor{display:inline-block;width:8px;height:14px;background:var(--accent);animation:blink 1.1s step-end infinite;vertical-align:text-bottom;}
+@keyframes blink{50%{opacity:0;}}
+
+/* CERTIFICATIONS */
+#certifications{background:var(--bg2);}
+.cert-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;}
+.cert-card{background:var(--surface);border:1px solid var(--border);padding:28px;position:relative;overflow:hidden;transition:all 0.3s;}
+.cert-card::before{content:'';position:absolute;bottom:0;left:0;width:0;height:2px;background:linear-gradient(to right,var(--accent),var(--accent2));transition:width 0.4s;}
+.cert-card:hover::before{width:100%;}
+.cert-card:hover{border-color:rgba(0,229,255,0.3);box-shadow:var(--glow);}
+.cert-icon{font-size:32px;margin-bottom:14px;}
+.cert-provider{font-family:var(--font-mono);font-size:10px;color:var(--accent);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:6px;}
+.cert-name{font-size:16px;font-weight:500;color:var(--text);margin-bottom:6px;line-height:1.4;}
+.cert-status{font-family:var(--font-mono);font-size:10px;color:var(--text3);}
+.cert-status.earned{color:var(--accent2);}
+
+/* CONTACT */
+#contact{background:var(--bg);}
+.contact-sub{font-size:16px;line-height:1.75;color:var(--text2);margin-bottom:40px;max-width:560px;}
+.contact-links{display:flex;flex-direction:column;gap:16px;max-width:560px;}
+.contact-link{display:flex;align-items:center;gap:16px;padding:20px 24px;background:var(--surface);border:1px solid var(--border);text-decoration:none;color:var(--text);font-family:var(--font-mono);font-size:13px;transition:all 0.3s;cursor:none;position:relative;overflow:hidden;}
+.contact-link::before{content:'';position:absolute;left:0;top:0;width:0;height:100%;background:rgba(0,229,255,0.04);transition:width 0.3s;}
+.contact-link:hover::before{width:100%;}
+.contact-link:hover{border-color:var(--accent);box-shadow:var(--glow);}
+.contact-link-icon{font-size:22px;width:36px;text-align:center;flex-shrink:0;}
+.contact-link-label{font-size:14px;color:var(--text);margin-bottom:3px;}
+.contact-link-url{color:var(--text3);font-size:11px;display:block;font-family:var(--font-mono);}
+.contact-link-arrow{margin-left:auto;color:var(--text3);font-size:16px;transition:color 0.3s,transform 0.3s;}
+.contact-link:hover .contact-link-arrow{color:var(--accent);transform:translate(3px,-3px);}
+
+/* FOOTER */
+footer{position:relative;z-index:1;padding:40px 80px;border-top:1px solid var(--border);background:var(--bg2);display:flex;justify-content:space-between;align-items:center;}
+.footer-left{font-family:var(--font-mono);font-size:12px;color:var(--text3);}
+.footer-left span{color:var(--accent);}
+.footer-right{font-family:var(--font-mono);font-size:10px;color:var(--text3);}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.reveal{opacity:0;transform:translateY(40px);transition:opacity 0.7s,transform 0.7s;}
+.reveal.visible{opacity:1;transform:none;}
+.reveal-delay-1{transition-delay:0.1s;}
+.reveal-delay-2{transition-delay:0.2s;}
+.reveal-delay-3{transition-delay:0.3s;}
+.reveal-delay-4{transition-delay:0.4s;}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  nav{padding:16px 24px;}
+  .nav-links{display:none;}
+  section{padding:70px 24px;}
+  #hero{padding:100px 24px 60px;}
+  .about-grid{grid-template-columns:1fr;gap:40px;}
+  .hero-tags{display:none;}
+  footer{padding:32px 24px;flex-direction:column;gap:16px;text-align:center;}
+  .project-card.featured{grid-column:1;display:block;}
+  .project-card.featured .project-metrics{grid-template-columns:repeat(3,1fr);grid-template-rows:1fr;border-left:none;border-top:1px solid var(--border);}
+  #terminal-section{padding:60px 24px;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-text">INITIALIZING PORTFOLIO_v2.0</div>
+  <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+  <div class="loader-pct" id="loader-pct">0%</div>
+</div>
+
+<!-- CURSOR -->
+<div class="cursor-dot" id="cursor-dot"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">chait<span>@cloud</span>:~$</div>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#projects">Projects</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#certifications">Certs</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <div class="nav-status">
+    <div class="status-dot"></div>
+    Open to Opportunities
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-orb"></div>
+  <div class="hero-eyebrow">// Cloud Engineer &amp; AWS Architect</div>
+  <h1 class="hero-name">
+    <span class="line1">Chaitanya</span>
+    <span class="line2">Dubal</span>
+  </h1>
+  <div class="hero-title">
+    <span class="highlight">MSc Information Technology</span> — Arizona State University
+  </div>
+  <p class="hero-desc">
+    I design and deploy production-grade cloud architectures on AWS — turning complex problems into scalable, secure, and cost-efficient solutions. From SageMaker ML pipelines to Bedrock-powered AI assistants, I build the full stack.
+  </p>
+  <div class="hero-ctas">
+    <a href="#projects" class="btn-primary"><span>↓</span> View Projects</a>
+    <a href="https://github.com/chaitanyadubal" target="_blank" class="btn-outline"><span>⌥</span> GitHub</a>
+    <a href="https://www.linkedin.com/in/chaitanya-dubal" target="_blank" class="btn-outline"><span>↗</span> LinkedIn</a>
+  </div>
+  <div class="hero-tags">
+    <div class="hero-tag"><span>●</span> AWS Certified (in progress)</div>
+    <div class="hero-tag"><span>●</span> SageMaker · Bedrock · CloudFront</div>
+    <div class="hero-tag"><span>●</span> 3 Portfolio Projects · 1 Live</div>
+    <div class="hero-tag"><span>●</span> Tempe, AZ · Open to Remote</div>
+  </div>
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    scroll to explore
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-label"><span class="num">01</span> About Me</div>
+  <div class="about-grid">
+    <div>
+      <h2 class="section-title reveal">Building the Cloud,<br>One Stack at a Time.</h2>
+      <p class="about-intro reveal reveal-delay-1">
+        I'm a cloud engineer pursuing my <strong>Master's in Information Technology</strong> at ASU, specialising in <span class="accent">cloud architecture, security, and data</span>. I don't just study theory — I ship production deployments.
+      </p>
+      <br>
+      <p class="about-intro reveal reveal-delay-2">
+        My three portfolio projects span ML inference APIs on <strong>SageMaker</strong>, AI assistants via <strong>AWS Bedrock (Claude 3 Haiku)</strong>, and full ETL pipelines with <strong>interactive analytics dashboards</strong> — proving I own every layer of the stack.
+      </p>
+      <div class="edu-card reveal reveal-delay-3">
+        <div class="edu-school">Arizona State University</div>
+        <div class="edu-degree">M.S. Information Technology (MSIT) — Class of 2025</div>
+        <div class="edu-courses">
+          <span class="course-tag">IFT 420 · Cloud Architecture</span>
+          <span class="course-tag">IFT 422 · Cloud Security</span>
+          <span class="course-tag">IFT 533 · Data Visualization</span>
+          <span class="course-tag">IFT 560 · Advanced Cloud</span>
+          <span class="course-tag">IFT 562 · Cloud Operations</span>
+        </div>
+      </div>
+    </div>
+    <div class="skills-panel">
+      <div class="skill-category reveal">
+        <div class="skill-cat-title">☁️ AWS Services</div>
+        <div class="skill-chips">
+          <span class="chip">SageMaker</span><span class="chip">Bedrock</span><span class="chip">CloudFront</span><span class="chip">S3</span><span class="chip">Lambda</span><span class="chip">API Gateway</span><span class="chip">IAM</span><span class="chip">EC2</span><span class="chip">CloudWatch</span><span class="chip">VPC</span><span class="chip">DynamoDB</span><span class="chip">RDS</span>
+        </div>
+      </div>
+      <div class="skill-category reveal reveal-delay-1">
+        <div class="skill-cat-title">🛠️ Dev Stack</div>
+        <div class="skill-chips">
+          <span class="chip">Python</span><span class="chip">FastAPI</span><span class="chip">JavaScript</span><span class="chip">React</span><span class="chip">Chart.js</span><span class="chip">Pandas</span><span class="chip">Scikit-learn</span><span class="chip">Docker</span><span class="chip">Uvicorn</span>
+        </div>
+      </div>
+      <div class="skill-category reveal reveal-delay-2">
+        <div class="skill-cat-title">🔒 Cloud Security &amp; Ops</div>
+        <div class="skill-chips">
+          <span class="chip">IAM Policies</span><span class="chip">KMS</span><span class="chip">WAF</span><span class="chip">GuardDuty</span><span class="chip">CloudTrail</span><span class="chip">Security Hub</span><span class="chip">RBAC</span><span class="chip">VPC Security</span>
+        </div>
+      </div>
+      <div class="skill-category reveal reveal-delay-3">
+        <div class="skill-cat-title">⚙️ IaC &amp; DevOps</div>
+        <div class="skill-chips">
+          <span class="chip">Terraform</span><span class="chip">AWS CDK</span><span class="chip">CloudFormation</span><span class="chip">GitHub Actions</span><span class="chip">CI/CD</span><span class="chip">Git</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-label"><span class="num">02</span> Projects</div>
+  <h2 class="section-title reveal">Production Deployments,<br>Not Just Side Projects.</h2>
+  <br><br>
+  <div class="projects-grid">
+
+    <!-- PitWall FEATURED -->
+    <div class="project-card featured reveal">
+      <div class="project-body-wrap">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;">
+          <span class="project-badge badge-live">● Live in Production</span>
+          <span class="project-num">01</span>
+        </div>
+        <div style="font-size:48px;margin-bottom:16px;">🏎️</div>
+        <div class="project-name">PitWall</div>
+        <div class="project-tagline">F1 Pit Stop Prediction Engine · AWS SageMaker</div>
+        <p class="project-desc">End-to-end ML pipeline that predicts optimal Formula 1 pit stop timing using historical race telemetry. Trained on multi-season race data, deployed as a real-time inference endpoint on SageMaker, and served via CloudFront CDN with sub-100ms global latency.</p>
+        <div class="project-stack">
+          <span class="stack-tag">AWS SageMaker</span><span class="stack-tag">CloudFront</span><span class="stack-tag">S3</span><span class="stack-tag">Python</span><span class="stack-tag">Scikit-learn</span><span class="stack-tag">FastAPI</span><span class="stack-tag">us-east-1</span>
+        </div>
+        <div class="project-links">
+          <a href="https://d130e2y938sxq5.cloudfront.net" target="_blank" class="project-link">↗ Live Dashboard</a>
+          <a href="https://github.com/chaitanyadubal" target="_blank" class="project-link">⌥ GitHub</a>
+        </div>
+      </div>
+      <div class="project-metrics">
+        <div class="metric"><span class="metric-val">InService</span><span class="metric-label">Endpoint Status</span></div>
+        <div class="metric"><span class="metric-val">&lt;100ms</span><span class="metric-label">Global Latency</span></div>
+        <div class="metric"><span class="metric-val">CDN</span><span class="metric-label">CloudFront Edge</span></div>
+      </div>
+    </div>
+
+    <!-- CloudMind -->
+    <div class="project-card reveal">
+      <div class="project-header">
+        <span class="project-badge badge-local">◐ Local / Ready to Deploy</span>
+        <span class="project-num">02</span>
+      </div>
+      <div class="project-icon">🧠</div>
+      <div class="project-body">
+        <div class="project-name">CloudMind</div>
+        <div class="project-tagline">AI Security Assistant · AWS Bedrock</div>
+        <p class="project-desc">Intelligent AWS security assistant powered by Claude 3 Haiku via Amazon Bedrock. Features an agent reasoning loop with 10+ categorised security prompts, sidebar+panel UI, real-time streaming chat, and source attribution tags. Migrated from Anthropic API to Bedrock for enterprise cost efficiency.</p>
+        <div class="project-stack">
+          <span class="stack-tag">AWS Bedrock</span><span class="stack-tag">Claude 3 Haiku</span><span class="stack-tag">FastAPI</span><span class="stack-tag">Python</span><span class="stack-tag">Uvicorn</span><span class="stack-tag">IAM</span>
+        </div>
+        <div class="project-links">
+          <a href="https://github.com/chaitanyadubal/CloudMind" target="_blank" class="project-link">↗ GitHub Repo</a>
+        </div>
+        <div class="project-metrics">
+          <div class="metric"><span class="metric-val">10+</span><span class="metric-label">Security Prompts</span></div>
+          <div class="metric"><span class="metric-val">Bedrock</span><span class="metric-label">LLM Provider</span></div>
+          <div class="metric"><span class="metric-val">Agent</span><span class="metric-label">Loop Arch</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MediFlow -->
+    <div class="project-card reveal reveal-delay-1">
+      <div class="project-header">
+        <span class="project-badge badge-local">◐ Local / Ready to Deploy</span>
+        <span class="project-num">03</span>
+      </div>
+      <div class="project-icon">🏥</div>
+      <div class="project-body">
+        <div class="project-name">MediFlow</div>
+        <div class="project-tagline">Hospital Readmission Analytics · CMS Data</div>
+        <p class="project-desc">Full ETL pipeline ingesting real CMS Hospital Readmissions Reduction Program data — 11,700 cleaned rows across 51 states, 6 conditions, and 2,800+ hospitals. Question-driven Chart.js dashboard with verdict cards and animated charts makes complex healthcare data instantly interpretable.</p>
+        <div class="project-stack">
+          <span class="stack-tag">Python</span><span class="stack-tag">Pandas</span><span class="stack-tag">Chart.js</span><span class="stack-tag">ETL Pipeline</span><span class="stack-tag">CMS Data</span><span class="stack-tag">HTML/CSS/JS</span>
+        </div>
+        <div class="project-links">
+          <a href="https://github.com/chaitanyadubal" target="_blank" class="project-link">↗ GitHub</a>
+        </div>
+        <div class="project-metrics">
+          <div class="metric"><span class="metric-val">11.7K</span><span class="metric-label">Data Rows</span></div>
+          <div class="metric"><span class="metric-val">51</span><span class="metric-label">States</span></div>
+          <div class="metric"><span class="metric-val">2,800+</span><span class="metric-label">Hospitals</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section id="architecture">
+  <div class="section-label"><span class="num">03</span> System Architecture</div>
+  <h2 class="section-title reveal">How I Think in Cloud.</h2>
+  <br>
+  <div class="arch-tabs reveal">
+    <button class="arch-tab active" onclick="switchTab('pitwall',this)">PitWall</button>
+    <button class="arch-tab" onclick="switchTab('cloudmind',this)">CloudMind</button>
+    <button class="arch-tab" onclick="switchTab('mediflow',this)">MediFlow</button>
+  </div>
+
+  <div class="arch-panel active" id="tab-pitwall">
+    <div class="arch-diagram reveal">
+      <pre class="arch-ascii"><span class="label">  USER BROWSER</span>
+       │
+       ▼
+<span class="box">┌────────────────────────────────────┐</span>
+<span class="box">│        AWS CloudFront CDN          │</span>  <span class="service">← Edge Distribution (E2PEJF9NTSK1AL)</span>
+<span class="box">│    d130e2y938sxq5.cloudfront.net   │</span>  <span class="service">   Global edge caching, SSL, &lt;100ms</span>
+<span class="box">└──────────────┬─────────────────────┘</span>
+               │
+               ▼
+<span class="box">┌────────────────────────────────────┐</span>
+<span class="box">│         Amazon S3 Bucket           │</span>  <span class="service">← Static dashboard assets</span>
+<span class="box">└──────────────┬─────────────────────┘</span>
+               │  API calls
+               ▼
+<span class="box">┌────────────────────────────────────┐</span>
+<span class="box">│         AWS API Gateway            │</span>  <span class="service">← REST API routing</span>
+<span class="box">└──────────────┬─────────────────────┘</span>
+               │
+               ▼
+<span class="box">┌────────────────────────────────────┐</span>
+<span class="box">│   AWS SageMaker Inference Endpoint │</span>  <span class="service">← pitwall-predictor-endpoint (InService)</span>
+<span class="box">│       Scikit-learn · us-east-1     │</span>  <span class="service">   Real-time F1 pit stop predictions</span>
+<span class="box">└────────────────────────────────────┘</span></pre>
+    </div>
+    <div class="arch-services reveal reveal-delay-1">
+      <div class="arch-service"><div class="arch-service-icon">☁️</div><div class="arch-service-name">CloudFront</div><div class="arch-service-desc">Global CDN edge, SSL termination, caching for &lt;100ms latency worldwide</div></div>
+      <div class="arch-service"><div class="arch-service-icon">🪣</div><div class="arch-service-name">S3</div><div class="arch-service-desc">Static website hosting for the dashboard UI assets</div></div>
+      <div class="arch-service"><div class="arch-service-icon">🔌</div><div class="arch-service-name">API Gateway</div><div class="arch-service-desc">REST API routing predictions requests to SageMaker endpoint</div></div>
+      <div class="arch-service"><div class="arch-service-icon">🤖</div><div class="arch-service-name">SageMaker</div><div class="arch-service-desc">Hosted ML model endpoint for real-time pit stop predictions</div></div>
+    </div>
+  </div>
+
+  <div class="arch-panel" id="tab-cloudmind">
+    <div class="arch-diagram reveal">
+      <pre class="arch-ascii"><span class="label">  USER BROWSER</span>
+       │
+       ▼
+<span class="box">┌────────────────────────────────────┐</span>
+<span class="box">│       FastAPI Backend              │</span>  <span class="service">← uvicorn app.main:app --port 8000</span>
+<span class="box">│       Python · Uvicorn             │</span>  <span class="service">   Async, streaming responses</span>
+<span class="box">└──────────────┬─────────────────────┘</span>
+               │  boto3 SDK
+               ▼
+<span class="box">┌────────────────────────────────────┐</span>
+<span class="box">│           AWS Bedrock              │</span>  <span class="service">← Managed LLM service</span>
+<span class="box">│       Claude 3 Haiku               │</span>  <span class="service">   No GPU management, pay-per-token</span>
+<span class="box">└──────────────┬─────────────────────┘</span>
+               │
+               ▼
+<span class="box">┌────────────────────────────────────┐</span>
+<span class="box">│     Agent Loop (10 iterations)     │</span>  <span class="service">← Tool calls, reasoning, security ctx</span>
+<span class="box">│     Security Context Engine        │</span>
+<span class="box">└────────────────────────────────────┘</span></pre>
+    </div>
+    <div class="arch-services reveal reveal-delay-1">
+      <div class="arch-service"><div class="arch-service-icon">🦾</div><div class="arch-service-name">AWS Bedrock</div><div class="arch-service-desc">Managed access to Claude 3 Haiku — no infra, pay per token</div></div>
+      <div class="arch-service"><div class="arch-service-icon">⚡</div><div class="arch-service-name">FastAPI</div><div class="arch-service-desc">Async Python backend with streaming responses and CORS handling</div></div>
+      <div class="arch-service"><div class="arch-service-icon">🔐</div><div class="arch-service-name">IAM Roles</div><div class="arch-service-desc">Least-privilege access to Bedrock via instance/task roles</div></div>
+      <div class="arch-service"><div class="arch-service-icon">🔄</div><div class="arch-service-name">Agent Loop</div><div class="arch-service-desc">10-iteration reasoning loop with tool-use for complex security queries</div></div>
+    </div>
+  </div>
+
+  <div class="arch-panel" id="tab-mediflow">
+    <div class="arch-diagram reveal">
+      <pre class="arch-ascii"><span class="label">  CMS DATA SOURCE</span>  (Hospital Readmissions Reduction Program)
+       │
+       ▼
+<span class="box">┌────────────────────────────────────┐</span>
+<span class="box">│      Python ETL Pipeline           │</span>  <span class="service">← Pandas · Data cleaning pipeline</span>
+<span class="box">│      Extract → Transform → Load    │</span>  <span class="service">   11,700 rows · 51 states · 2,800+ hospitals</span>
+<span class="box">└──────────────┬─────────────────────┘</span>
+               │
+               ▼
+<span class="box">┌────────────────────────────────────┐</span>
+<span class="box">│   Cleaned Dataset (CSV/JSON)       │</span>  <span class="service">← 6 medical conditions normalised</span>
+<span class="box">└──────────────┬─────────────────────┘</span>
+               │
+               ▼
+<span class="box">┌────────────────────────────────────┐</span>
+<span class="box">│  Interactive HTML Dashboard        │</span>  <span class="service">← Chart.js · 8 plain-English questions</span>
+<span class="box">│  run.py → localhost                │</span>  <span class="service">   Verdict cards · Animated charts</span>
+<span class="box">└────────────────────────────────────┘</span></pre>
+    </div>
+    <div class="arch-services reveal reveal-delay-1">
+      <div class="arch-service"><div class="arch-service-icon">📊</div><div class="arch-service-name">CMS Data</div><div class="arch-service-desc">Real federal healthcare data — not synthetic, not toy datasets</div></div>
+      <div class="arch-service"><div class="arch-service-icon">🐼</div><div class="arch-service-name">Pandas ETL</div><div class="arch-service-desc">Multi-stage cleaning, normalisation, and aggregation pipeline</div></div>
+      <div class="arch-service"><div class="arch-service-icon">📈</div><div class="arch-service-name">Chart.js</div><div class="arch-service-desc">Animated, interactive charts with verdict cards per question</div></div>
+      <div class="arch-service"><div class="arch-service-icon">❓</div><div class="arch-service-name">Q&amp;A Design</div><div class="arch-service-desc">8 plain-English questions replacing complex BI tool navigation</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TERMINAL -->
+<section id="terminal-section">
+  <div class="terminal-window reveal">
+    <div class="terminal-bar">
+      <div class="term-dots">
+        <div class="term-dot r"></div>
+        <div class="term-dot y"></div>
+        <div class="term-dot g"></div>
+      </div>
+      <div class="term-title">chait@aws-portfolio ~ — bash</div>
+    </div>
+    <div class="terminal-body" id="terminal-body"></div>
+  </div>
+</section>
+
+<!-- CERTIFICATIONS -->
+<section id="certifications">
+  <div class="section-label"><span class="num">04</span> Certifications &amp; Education</div>
+  <h2 class="section-title reveal">Credentials &amp; Courses.</h2>
+  <br>
+  <div class="cert-grid">
+    <div class="cert-card reveal">
+      <div class="cert-icon">☁️</div>
+      <div class="cert-provider">Amazon Web Services</div>
+      <div class="cert-name">AWS Certified Solutions Architect — Associate</div>
+      <div class="cert-status">In Progress · Target 2025</div>
+    </div>
+    <div class="cert-card reveal reveal-delay-1">
+      <div class="cert-icon">🔒</div>
+      <div class="cert-provider">Amazon Web Services</div>
+      <div class="cert-name">AWS Certified Security — Specialty</div>
+      <div class="cert-status">Planned · 2025</div>
+    </div>
+    <div class="cert-card reveal reveal-delay-2">
+      <div class="cert-icon">🎓</div>
+      <div class="cert-provider">Arizona State University</div>
+      <div class="cert-name">M.S. Information Technology</div>
+      <div class="cert-status earned">✓ Class of 2025</div>
+    </div>
+    <div class="cert-card reveal reveal-delay-3">
+      <div class="cert-icon">🤖</div>
+      <div class="cert-provider">AWS / Coursera</div>
+      <div class="cert-name">Generative AI with AWS Bedrock</div>
+      <div class="cert-status earned">✓ Completed</div>
+    </div>
+    <div class="cert-card reveal">
+      <div class="cert-icon">📊</div>
+      <div class="cert-provider">ASU · IFT 533</div>
+      <div class="cert-name">Data Visualization &amp; Analytics</div>
+      <div class="cert-status earned">✓ Course Completed</div>
+    </div>
+    <div class="cert-card reveal reveal-delay-1">
+      <div class="cert-icon">⚙️</div>
+      <div class="cert-provider">ASU · IFT 420/560</div>
+      <div class="cert-name">Cloud Architecture &amp; Design</div>
+      <div class="cert-status earned">✓ Course Completed</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-label"><span class="num">05</span> Contact</div>
+  <h2 class="section-title reveal">Let's Build<br>Something Great.</h2>
+  <br>
+  <p class="contact-sub reveal">
+    I'm actively looking for cloud engineering, DevOps, or solutions architect roles — full-time or internship. If you're building on AWS and need someone who can design, deploy, and own it end-to-end, let's talk.
+  </p>
+  <div class="contact-links">
+    <a href="https://www.linkedin.com/in/chaitanya-dubal" target="_blank" class="contact-link reveal">
+      <span class="contact-link-icon">💼</span>
+      <div><div class="contact-link-label">LinkedIn</div><span class="contact-link-url">linkedin.com/in/chaitanya-dubal</span></div>
+      <span class="contact-link-arrow">↗</span>
+    </a>
+    <a href="https://github.com/chaitanyadubal" target="_blank" class="contact-link reveal reveal-delay-1">
+      <span class="contact-link-icon">🐙</span>
+      <div><div class="contact-link-label">GitHub</div><span class="contact-link-url">github.com/chaitanyadubal</span></div>
+      <span class="contact-link-arrow">↗</span>
+    </a>
+    <a href="https://d130e2y938sxq5.cloudfront.net" target="_blank" class="contact-link reveal reveal-delay-2">
+      <span class="contact-link-icon">🏎️</span>
+      <div><div class="contact-link-label">PitWall — Live Project</div><span class="contact-link-url">d130e2y938sxq5.cloudfront.net</span></div>
+      <span class="contact-link-arrow">↗</span>
+    </a>
+    <a href="https://github.com/chaitanyadubal/CloudMind" target="_blank" class="contact-link reveal reveal-delay-3">
+      <span class="contact-link-icon">🧠</span>
+      <div><div class="contact-link-label">CloudMind — GitHub Repo</div><span class="contact-link-url">github.com/chaitanyadubal/CloudMind</span></div>
+      <span class="contact-link-arrow">↗</span>
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <span>chait@cloud:~$</span> echo "Built with ☁️ · Hosted on GitHub Pages"
+  </div>
+  <div class="footer-right">© 2025 Chaitanya Dubal · Cloud Engineer</div>
+</footer>
+
+<script>
+// ── LOADER ─────────────────────────────────────────────────────────────────
+const loader = document.getElementById('loader');
+const pctEl  = document.getElementById('loader-pct');
+let p = 0;
+const lt = setInterval(() => {
+  p = Math.min(p + Math.random() * 18, 100);
+  pctEl.textContent = Math.floor(p) + '%';
+  if (p >= 100) {
+    clearInterval(lt);
+    setTimeout(() => loader.classList.add('done'), 200);
+  }
+}, 80);
+
+// ── CUSTOM CURSOR ──────────────────────────────────────────────────────────
+const dot  = document.getElementById('cursor-dot');
+const ring = document.getElementById('cursor-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+(function animCursor() {
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) * 0.12;
+  dot.style.transform  = `translate(${mx - 4}px, ${my - 4}px)`;
+  ring.style.transform = `translate(${rx - 16}px, ${ry - 16}px)`;
+  requestAnimationFrame(animCursor);
+})();
+document.querySelectorAll('a,button,.chip,.arch-tab,.project-card').forEach(el => {
+  el.addEventListener('mouseenter', () => ring.classList.add('hovered'));
+  el.addEventListener('mouseleave', () => ring.classList.remove('hovered'));
+});
+
+// ── SCROLL REVEAL ──────────────────────────────────────────────────────────
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ── ARCH TABS ──────────────────────────────────────────────────────────────
+function switchTab(id, btn) {
+  document.querySelectorAll('.arch-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.arch-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  // re-trigger reveals in the newly shown panel
+  document.querySelectorAll('#tab-' + id + ' .reveal').forEach(el => {
+    el.classList.remove('visible');
+    setTimeout(() => el.classList.add('visible'), 60);
+  });
+}
+
+// ── TERMINAL TYPEWRITER ────────────────────────────────────────────────────
+const termBody = document.getElementById('terminal-body');
+const lines = [
+  { type: 'cmd',    prompt: 'chait@aws:~$', text: ' aws sagemaker describe-endpoint --endpoint-name pitwall-predictor-endpoint' },
+  { type: 'out',    cls: 'green', text: '{ "EndpointStatus": "InService", "EndpointName": "pitwall-predictor-endpoint" }' },
+  { type: 'blank' },
+  { type: 'cmd',    prompt: 'chait@aws:~$', text: ' aws cloudfront get-distribution --id E2PEJF9NTSK1AL' },
+  { type: 'out',    cls: 'accent', text: '{ "Distribution": { "DomainName": "d130e2y938sxq5.cloudfront.net", "Status": "Deployed" } }' },
+  { type: 'blank' },
+  { type: 'cmd',    prompt: 'chait@aws:~$', text: ' python -c "import boto3; b=boto3.client(\'bedrock\'); print(\'Bedrock: OK\')"' },
+  { type: 'out',    cls: 'green', text: 'Bedrock: OK  ← Claude 3 Haiku model ready' },
+  { type: 'blank' },
+  { type: 'cmd',    prompt: 'chait@aws:~$', text: ' echo "3 projects shipped. 1 live. All on AWS."' },
+  { type: 'out',    cls: 'orange', text: '3 projects shipped. 1 live. All on AWS.' },
+  { type: 'blank' },
+  { type: 'cursor' }
+];
+
+let lineIdx = 0, charIdx = 0;
+let rendered = false;
+
+function renderNextLine() {
+  if (lineIdx >= lines.length) return;
+  const line = lines[lineIdx];
+  if (line.type === 'blank') {
+    termBody.insertAdjacentHTML('beforeend', '<div style="height:6px"></div>');
+    lineIdx++; setTimeout(renderNextLine, 120); return;
+  }
+  if (line.type === 'cursor') {
+    termBody.insertAdjacentHTML('beforeend',
+      `<div class="term-line"><span class="term-prompt">chait@aws:~$</span><span class="term-cmd"> <span class="term-cursor"></span></span></div>`);
+    return;
+  }
+  if (line.type === 'out') {
+    termBody.insertAdjacentHTML('beforeend',
+      `<div class="term-output ${line.cls || ''}">${line.text}</div>`);
+    lineIdx++; setTimeout(renderNextLine, 180); return;
+  }
+  if (line.type === 'cmd') {
+    const row = document.createElement('div');
+    row.className = 'term-line';
+    row.innerHTML = `<span class="term-prompt">${line.prompt}</span><span class="term-cmd" id="tl${lineIdx}"></span>`;
+    termBody.appendChild(row);
+    const target = document.getElementById('tl' + lineIdx);
+    let ci = 0;
+    const typeChar = () => {
+      if (ci < line.text.length) {
+        target.textContent += line.text[ci++];
+        setTimeout(typeChar, 28 + Math.random() * 22);
+      } else {
+        lineIdx++;
+        setTimeout(renderNextLine, 200);
+      }
+    };
+    typeChar();
+  }
+}
+
+// Start terminal when it scrolls into view
+const termObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting && !rendered) {
+      rendered = true;
+      setTimeout(renderNextLine, 400);
+      termObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.3 });
+termObs.observe(termBody);
+
+// ── NAV ACTIVE STATE ──────────────────────────────────────────────────────
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 100) current = s.id; });
+  navLinks.forEach(a => {
+    a.style.color = a.getAttribute('href') === '#' + current ? 'var(--accent)' : '';
+  });
+}, { passive: true });
+</script>
+</body>
+</html>
