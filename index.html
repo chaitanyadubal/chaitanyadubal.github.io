@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Chaitanya Dubal AKA chait | Cloud, with extra chai</title>
 <meta name="description" content="Chaitanya Dubal — AWS-certified cloud engineer & backend developer. Ships production, not demos.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#161310">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Gochi+Hand&family=Anton&family=Caveat:wght@500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -207,6 +211,31 @@ section{position:relative;overflow:hidden;}
 .ct-links a:hover{color:var(--saffron);}
 .ct-visa{font-family:var(--anno);font-size:23px;color:var(--grey);margin-top:44px;transform:rotate(-1deg);display:inline-block;max-width:560px;}
 .ct-visa b{color:var(--saffron);font-weight:500;}
+/* ═══ CONTACT FORM ═══ */
+.ct-form-wrap{margin-top:80px;display:flex;justify-content:center;}
+.ct-form{position:relative;background:var(--paper);color:var(--ink);border:3px solid #000;box-shadow:8px 8px 0 var(--saffron);padding:38px 34px 30px;max-width:640px;width:100%;transform:rotate(-.5deg);}
+.ct-form .tape{background:rgba(255,138,30,0.45);}
+.ct-form-kicker{font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--saffron-deep);}
+.ct-form-title{font-family:var(--hand);font-size:clamp(28px,3.5vw,40px);line-height:1.1;margin:6px 0 24px;}
+.ct-form-title span{color:var(--saffron-deep);}
+.f-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px 20px;}
+.f-field{display:flex;flex-direction:column;gap:6px;}
+.f-field.full{grid-column:1/-1;}
+.f-field label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#555;}
+.f-field label b{color:var(--red);font-weight:400;}
+.f-field input,.f-field textarea{font-family:var(--hand);font-size:18px;color:var(--ink);background:#fff;border:3px solid #000;box-shadow:var(--shadow-sm);padding:10px 14px;outline:none;border-radius:0;-webkit-appearance:none;transition:transform .12s,box-shadow .12s;}
+.f-field textarea{resize:vertical;min-height:120px;line-height:1.5;}
+.f-field input:focus,.f-field textarea:focus{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--saffron-deep);border-color:var(--saffron-deep);}
+.f-field input::placeholder,.f-field textarea::placeholder{color:#b3a98f;}
+.f-foot{display:flex;align-items:center;gap:20px;margin-top:24px;flex-wrap:wrap;}
+.f-send{font-family:var(--hand);font-size:19px;background:var(--saffron);color:#000;border:3px solid #000;box-shadow:var(--shadow-sm);padding:11px 30px;cursor:pointer;transition:transform .12s,box-shadow .12s;}
+.f-send:hover{transform:translate(2px,2px);box-shadow:1px 1px 0 rgba(0,0,0,0.85);}
+.f-send:disabled{opacity:.55;cursor:wait;transform:none;box-shadow:var(--shadow-sm);}
+.f-status{font-family:var(--anno);font-size:24px;color:var(--green);transform:rotate(-1.5deg);display:none;}
+.f-status.err{color:var(--red);}
+.f-status.show{display:inline-block;}
+.f-hp{position:absolute;left:-9999px;opacity:0;height:0;width:0;overflow:hidden;}
+@media(max-width:640px){.f-grid{grid-template-columns:1fr;}.ct-form{padding:30px 22px 26px;}}
 /* ═══ FOOTER ═══ */
 footer{background:var(--paper);color:var(--ink);padding:50px 6vw 120px;display:flex;justify-content:space-between;align-items:flex-end;gap:30px;flex-wrap:wrap;border-top:3px solid #000;}
 .ft-bye{font-size:20px;max-width:380px;line-height:1.5;}
@@ -445,7 +474,7 @@ footer{background:var(--paper);color:var(--ink);padding:50px 6vw 120px;display:f
     <div class="ct-right">
       <div class="say reveal"><span class="arrow">→</span> say hi before overthinking it.</div>
       <div class="ct-mail reveal"><a class="btn-box primary" href="mailto:cvdubal450@gmail.com">✉ cvdubal450@gmail.com</a></div>
-      <div class="ct-frict reveal">(opens your mail app — no forms, no friction)</div>
+      <div class="ct-frict reveal">(opens your mail app — or use the form below)</div>
       <div class="ct-links reveal">
         <a href="https://www.linkedin.com/in/chaitanya-dubal/" target="_blank" rel="noopener">— LINKEDIN</a>
         <a href="https://github.com/chaitanyadubal" target="_blank" rel="noopener">— GITHUB</a>
@@ -454,6 +483,45 @@ footer{background:var(--paper);color:var(--ink);padding:50px 6vw 120px;display:f
       </div>
       <span class="ct-visa reveal">ps: on F-1 OPT — <b>work-authorized in the US for ~3 years</b> (OPT + STEM extension). Sponsorship only becomes a conversation after that.</span>
     </div>
+  </div>
+  <!-- CONTACT FORM -->
+  <div class="ct-form-wrap reveal">
+    <form class="ct-form" id="ct-form" novalidate>
+      <div class="tape"></div>
+      <span class="ct-form-kicker">or drop a note right here</span>
+      <div class="ct-form-title">leave your details, <span>I reply fast.</span></div>
+      <div class="f-grid">
+        <div class="f-field">
+          <label for="f-name">Name <b>*</b></label>
+          <input type="text" id="f-name" name="name" placeholder="Jane Doe" required autocomplete="name">
+        </div>
+        <div class="f-field">
+          <label for="f-title">Title</label>
+          <input type="text" id="f-title" name="title" placeholder="Engineering Manager" autocomplete="organization-title">
+        </div>
+        <div class="f-field">
+          <label for="f-company">Company</label>
+          <input type="text" id="f-company" name="company" placeholder="Acme Cloud Inc." autocomplete="organization">
+        </div>
+        <div class="f-field">
+          <label for="f-phone">Phone</label>
+          <input type="tel" id="f-phone" name="phone" placeholder="+1 (480) 555-0100" autocomplete="tel">
+        </div>
+        <div class="f-field full">
+          <label for="f-email">Email <b>*</b></label>
+          <input type="email" id="f-email" name="email" placeholder="jane@acme.com" required autocomplete="email">
+        </div>
+        <div class="f-field full">
+          <label for="f-msg">What are you reaching out for? <b>*</b></label>
+          <textarea id="f-msg" name="message" placeholder="Role, project, collab, or just chai talk…" required></textarea>
+        </div>
+        <input class="f-hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+      </div>
+      <div class="f-foot">
+        <button type="submit" class="f-send" id="f-send">Send it ☁️</button>
+        <span class="f-status" id="f-status"></span>
+      </div>
+    </form>
   </div>
 </section>
 <!-- FOOTER -->
@@ -595,6 +663,39 @@ addEventListener('keydown',e=>{
     }
   }
 });
+// ═══ CONTACT FORM → GOOGLE SHEET ═══
+(function(){
+  // ⚠️ Paste your Apps Script Web App URL between the quotes below:
+  const SHEET_URL='https://script.google.com/macros/s/AKfycbwffyQQnaTucLtpxbQr1UtO7B-Sf6t8cNk72Vd7cAlJbZIMrdNzbzOK3i86wrd2YPZC/exec';
+  const form=document.getElementById('ct-form');
+  const btn=document.getElementById('f-send');
+  const status=document.getElementById('f-status');
+  if(!form)return;
+  form.addEventListener('submit',async e=>{
+    e.preventDefault();
+    // honeypot: bots fill hidden fields, humans don't
+    if(form.website.value)return;
+    if(!form.checkValidity()){form.reportValidity();return;}
+    if(SHEET_URL.indexOf('PASTE_')===0){
+      status.textContent='form not wired up yet — email me instead ☕';
+      status.className='f-status err show';return;
+    }
+    btn.disabled=true;btn.textContent='Sending…';
+    status.className='f-status';
+    const data=new URLSearchParams();
+    ['name','title','company','phone','email','message'].forEach(k=>data.append(k,form[k].value.trim()));
+    try{
+      await fetch(SHEET_URL,{method:'POST',mode:'no-cors',body:data});
+      status.textContent='got it — talk soon ✓';
+      status.className='f-status show';
+      form.reset();
+    }catch(err){
+      status.textContent='hmm, that failed — email me instead?';
+      status.className='f-status err show';
+    }
+    btn.disabled=false;btn.textContent='Send it ☁️';
+  });
+})();
 </script>
 <!-- ═══ GOATCOUNTER ANALYTICS ═══ -->
 <!-- Replace "chait" below with the code you chose at goatcounter.com if different. -->
